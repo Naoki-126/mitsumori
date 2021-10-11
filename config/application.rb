@@ -14,6 +14,10 @@ module Mitsumori
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.1
 
+    # 標準言語とタイムゾーンを日本に変更
+    config.i18n.default_locale = :ja
+    config.time_zone = 'Asia/Tokyo'
+
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
@@ -21,5 +25,18 @@ module Mitsumori
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+
+    config.generators do |g|
+      g.template_engine false
+      g.javascripts false
+      g.stylesheets false
+      g.helper false
+      g.test_framework :rspec,
+                       view_specs: false,
+                       routing_specs: false,
+                       helper_specs: false,
+                       controller_specs: false,
+                       request_specs: true
+    end
   end
 end
