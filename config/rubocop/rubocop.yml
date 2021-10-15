@@ -1,12 +1,9 @@
-# Copy from https://github.com/onk/onkcop/blob/master/config/rubocop.yml
-
 # 自動生成されるものはチェック対象から除外する
 AllCops:
   Exclude:
     - "node_modules/**/*" # rubocop config/default.yml
-    - "vendor/**/*" # rubocop config/default.yml
+    - "vendor/**/*"       # rubocop config/default.yml
     - "db/schema.rb"
-    - "bin/bundle"
 
 #################### Layout ################################
 
@@ -124,6 +121,7 @@ Metrics/BlockLength:
     - "config/routes.rb"
     - "config/routes/**/*.rb"
     - "*.gemspec"
+    - "db/**.rb"
 
 # 6 は強すぎるので緩める
 Metrics/CyclomaticComplexity:
@@ -147,6 +145,7 @@ Metrics/MethodLength:
 Metrics/PerceivedComplexity:
   Max: 8
 
+
 #################### Naming ################################
 
 # has_ から始まるメソッドは許可する
@@ -165,11 +164,20 @@ Naming/PredicateName:
 Naming/MethodParameterName:
   Enabled: false
 
+#################### Performance ###########################
+
+# downcase or upcase しての比較はイディオムの域なので、多少の
+# パフォーマンスの違いがあろうが casecmp に変える意義を感じない
+# Performance/Casecmp:
+#   Enabled: false
+
+
 #################### Security ##############################
 
 # 毎回 YAML.safe_load(yaml_str, [Date, Time]) するのは面倒で。。
 Security/YAMLLoad:
   Enabled: false
+
 
 #################### Style #################################
 
@@ -194,6 +202,10 @@ Style/BlockDelimiters:
   AutoCorrect: false
   Exclude:
     - "spec/**/*_spec.rb"
+
+# option 等、明示的にハッシュにした方が分かりやすい場合もある
+# Style/BracesAroundHashParameters:
+#   Enabled: false
 
 # scope が違うとか親 module の存在確認が必要とかデメリットはあるが、
 # namespace 付きのクラスはかなり頻繁に作るので簡単に書きたい。
@@ -410,15 +422,3 @@ Style/WordArray:
 # 中身を入れ替えて否定外しても良いんだけど、どちらが例外的な処理なのかが分かりづらくなる。
 Style/ZeroLengthPredicate:
   Enabled: false
-
-# version 1 からは強制 true
-Style/HashEachMethods:
-  Enabled: true
-
-# version 1 からは強制 true
-Style/HashTransformKeys:
-  Enabled: true
-
-# version 1 からは強制 true
-Style/HashTransformValues:
-  Enabled: true
