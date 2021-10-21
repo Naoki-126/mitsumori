@@ -12,18 +12,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20_211_012_091_635) do # rubocop:disable all
+ActiveRecord::Schema.define(version: 20_211_021_220_655) do  # rubocop:disable all
   # These are extensions that must be enabled in order to support this database
   enable_extension 'plpgsql'
 
-  create_table 'comments', force: :cascade do |t|
-    t.text 'body'
+  create_table 'clients', force: :cascade do |t|
+    t.string 'client_name'
     t.datetime 'created_at', precision: 6, null: false
     t.datetime 'updated_at', precision: 6, null: false
   end
 
-  create_table 'companies', force: :cascade do |t|
-    t.string 'company_name'
+  create_table 'comments', force: :cascade do |t|
+    t.text 'body'
     t.datetime 'created_at', precision: 6, null: false
     t.datetime 'updated_at', precision: 6, null: false
   end
@@ -65,6 +65,12 @@ ActiveRecord::Schema.define(version: 20_211_012_091_635) do # rubocop:disable al
   create_table 'sales', force: :cascade do |t|
     t.decimal 'sell_price'
     t.money 'sell_mold', scale: 2
+    t.datetime 'created_at', precision: 6, null: false
+    t.datetime 'updated_at', precision: 6, null: false
+  end
+
+  create_table 'suppliers', force: :cascade do |t|
+    t.string 'supplier_name'
     t.datetime 'created_at', precision: 6, null: false
     t.datetime 'updated_at', precision: 6, null: false
   end
