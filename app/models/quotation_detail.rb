@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class Cost < ApplicationRecord
+class QuotationDetail < ApplicationRecord
   belongs_to :quotation
 end
