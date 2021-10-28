@@ -2,6 +2,6 @@
 
 require 'rails_helper'
 
-RSpec.describe Quantity, type: :model do
+RSpec.describe QuotationHasSupplier, type: :model do
   pending "add some examples to (or delete) #{__FILE__}"
 end

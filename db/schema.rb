@@ -12,7 +12,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20_211_024_220_140) do # rubocop:disable all
+ActiveRecord::Schema.define(version: 20_211_028_223_018) do  # rubocop:disable all
   # These are extensions that must be enabled in order to support this database
   enable_extension 'plpgsql'
 
@@ -30,15 +30,6 @@ ActiveRecord::Schema.define(version: 20_211_024_220_140) do # rubocop:disable al
     t.index ['quotation_id'], name: 'index_comments_on_quotation_id'
   end
 
-  create_table 'costs', force: :cascade do |t|
-    t.decimal 'cost_price'
-    t.money 'cost_mold', scale: 2
-    t.datetime 'created_at', precision: 6, null: false
-    t.datetime 'updated_at', precision: 6, null: false
-    t.bigint 'quotation_id', null: false
-    t.index ['quotation_id'], name: 'index_costs_on_quotation_id'
-  end
-
   create_table 'materials', force: :cascade do |t|
     t.string 'material_name'
     t.datetime 'created_at', precision: 6, null: false
@@ -51,10 +42,32 @@ ActiveRecord::Schema.define(version: 20_211_024_220_140) do # rubocop:disable al
     t.datetime 'updated_at', precision: 6, null: false
   end
 
-  create_table 'quantities', force: :cascade do |t|
-    t.integer 'monthly_production'
+  create_table 'quotation_details', force: :cascade do |t|
+    t.integer 'quantity_monthly'
+    t.decimal 'sell_price'
+    t.decimal 'cost_price'
+    t.bigint 'quotation_id', null: false
     t.datetime 'created_at', precision: 6, null: false
     t.datetime 'updated_at', precision: 6, null: false
+    t.index ['quotation_id'], name: 'index_quotation_details_on_quotation_id'
+  end
+
+  create_table 'quotation_has_operations', force: :cascade do |t|
+    t.bigint 'quotation_id', null: false
+    t.bigint 'operation_id', null: false
+    t.datetime 'created_at', precision: 6, null: false
+    t.datetime 'updated_at', precision: 6, null: false
+    t.index ['operation_id'], name: 'index_quotation_has_operations_on_operation_id'
+    t.index ['quotation_id'], name: 'index_quotation_has_operations_on_quotation_id'
+  end
+
+  create_table 'quotation_has_suppliers', force: :cascade do |t|
+    t.bigint 'quotation_id', null: false
+    t.bigint 'supplier_id', null: false
+    t.datetime 'created_at', precision: 6, null: false
+    t.datetime 'updated_at', precision: 6, null: false
+    t.index ['quotation_id'], name: 'index_quotation_has_suppliers_on_quotation_id'
+    t.index ['supplier_id'], name: 'index_quotation_has_suppliers_on_supplier_id'
   end
 
   create_table 'quotations', force: :cascade do |t|
@@ -67,18 +80,11 @@ ActiveRecord::Schema.define(version: 20_211_024_220_140) do # rubocop:disable al
     t.bigint 'user_id', null: false
     t.bigint 'material_id', null: false
     t.bigint 'client_id', null: false
+    t.decimal 'sell_mold'
+    t.decimal 'cost_mold'
     t.index ['client_id'], name: 'index_quotations_on_client_id'
     t.index ['material_id'], name: 'index_quotations_on_material_id'
     t.index ['user_id'], name: 'index_quotations_on_user_id'
-  end
-
-  create_table 'sales', force: :cascade do |t|
-    t.decimal 'sell_price'
-    t.money 'sell_mold', scale: 2
-    t.datetime 'created_at', precision: 6, null: false
-    t.datetime 'updated_at', precision: 6, null: false
-    t.bigint 'quotation_id', null: false
-    t.index ['quotation_id'], name: 'index_sales_on_quotation_id'
   end
 
   create_table 'suppliers', force: :cascade do |t|
@@ -102,9 +108,12 @@ ActiveRecord::Schema.define(version: 20_211_024_220_140) do # rubocop:disable al
   end
 
   add_foreign_key 'comments', 'quotations'
-  add_foreign_key 'costs', 'quotations'
+  add_foreign_key 'quotation_details', 'quotations'
+  add_foreign_key 'quotation_has_operations', 'operations'
+  add_foreign_key 'quotation_has_operations', 'quotations'
+  add_foreign_key 'quotation_has_suppliers', 'quotations'
+  add_foreign_key 'quotation_has_suppliers', 'suppliers'
   add_foreign_key 'quotations', 'clients'
   add_foreign_key 'quotations', 'materials'
   add_foreign_key 'quotations', 'users'
-  add_foreign_key 'sales', 'quotations'
 end
