@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :quotation_has_operation do
-    quotation { nil }
+  factory :operation_has_client_supplier do
     operation { nil }
+    client_supplier { nil }
   end
 end
