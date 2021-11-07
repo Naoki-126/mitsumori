@@ -12,15 +12,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20_211_028_223_018) do  # rubocop:disable all
+ActiveRecord::Schema.define(version: 20_211_107_221_825) do # rubocop:disable all
   # These are extensions that must be enabled in order to support this database
   enable_extension 'plpgsql'
-
-  create_table 'clients', force: :cascade do |t|
-    t.string 'client_name'
-    t.datetime 'created_at', precision: 6, null: false
-    t.datetime 'updated_at', precision: 6, null: false
-  end
 
   create_table 'comments', force: :cascade do |t|
     t.text 'body'
@@ -28,6 +22,12 @@ ActiveRecord::Schema.define(version: 20_211_028_223_018) do  # rubocop:disable a
     t.datetime 'updated_at', precision: 6, null: false
     t.bigint 'quotation_id', null: false
     t.index ['quotation_id'], name: 'index_comments_on_quotation_id'
+  end
+
+  create_table 'companies', force: :cascade do |t|
+    t.string 'company_name'
+    t.datetime 'created_at', precision: 6, null: false
+    t.datetime 'updated_at', precision: 6, null: false
   end
 
   create_table 'materials', force: :cascade do |t|
@@ -40,6 +40,25 @@ ActiveRecord::Schema.define(version: 20_211_028_223_018) do  # rubocop:disable a
     t.string 'operation_name'
     t.datetime 'created_at', precision: 6, null: false
     t.datetime 'updated_at', precision: 6, null: false
+    t.decimal 'operation_cost'
+  end
+
+  create_table 'quotation_detail_has_companies', force: :cascade do |t|
+    t.bigint 'quotation_detail_id', null: false
+    t.bigint 'company_id', null: false
+    t.datetime 'created_at', precision: 6, null: false
+    t.datetime 'updated_at', precision: 6, null: false
+    t.index ['company_id'], name: 'index_quotation_detail_has_companies_on_company_id'
+    t.index ['quotation_detail_id'], name: 'index_quotation_detail_has_companies_on_quotation_detail_id'
+  end
+
+  create_table 'quotation_detail_has_operations', force: :cascade do |t|
+    t.bigint 'quotation_detail_id', null: false
+    t.bigint 'operation_id', null: false
+    t.datetime 'created_at', precision: 6, null: false
+    t.datetime 'updated_at', precision: 6, null: false
+    t.index ['operation_id'], name: 'index_quotation_detail_has_operations_on_operation_id'
+    t.index ['quotation_detail_id'], name: 'index_quotation_detail_has_operations_on_quotation_detail_id'
   end
 
   create_table 'quotation_details', force: :cascade do |t|
@@ -50,24 +69,6 @@ ActiveRecord::Schema.define(version: 20_211_028_223_018) do  # rubocop:disable a
     t.datetime 'created_at', precision: 6, null: false
     t.datetime 'updated_at', precision: 6, null: false
     t.index ['quotation_id'], name: 'index_quotation_details_on_quotation_id'
-  end
-
-  create_table 'quotation_has_operations', force: :cascade do |t|
-    t.bigint 'quotation_id', null: false
-    t.bigint 'operation_id', null: false
-    t.datetime 'created_at', precision: 6, null: false
-    t.datetime 'updated_at', precision: 6, null: false
-    t.index ['operation_id'], name: 'index_quotation_has_operations_on_operation_id'
-    t.index ['quotation_id'], name: 'index_quotation_has_operations_on_quotation_id'
-  end
-
-  create_table 'quotation_has_suppliers', force: :cascade do |t|
-    t.bigint 'quotation_id', null: false
-    t.bigint 'supplier_id', null: false
-    t.datetime 'created_at', precision: 6, null: false
-    t.datetime 'updated_at', precision: 6, null: false
-    t.index ['quotation_id'], name: 'index_quotation_has_suppliers_on_quotation_id'
-    t.index ['supplier_id'], name: 'index_quotation_has_suppliers_on_supplier_id'
   end
 
   create_table 'quotations', force: :cascade do |t|
@@ -87,12 +88,6 @@ ActiveRecord::Schema.define(version: 20_211_028_223_018) do  # rubocop:disable a
     t.index ['user_id'], name: 'index_quotations_on_user_id'
   end
 
-  create_table 'suppliers', force: :cascade do |t|
-    t.string 'supplier_name'
-    t.datetime 'created_at', precision: 6, null: false
-    t.datetime 'updated_at', precision: 6, null: false
-  end
-
   create_table 'users', force: :cascade do |t|
     t.string 'name', default: '', null: false
     t.string 'encrypted_password', default: '', null: false
@@ -101,19 +96,19 @@ ActiveRecord::Schema.define(version: 20_211_028_223_018) do  # rubocop:disable a
     t.datetime 'remember_created_at'
     t.datetime 'created_at', precision: 6, null: false
     t.datetime 'updated_at', precision: 6, null: false
-    t.string 'company_id'
+    t.string 'registration_id'
     t.string 'email'
     t.index ['name'], name: 'index_users_on_name', unique: true
     t.index ['reset_password_token'], name: 'index_users_on_reset_password_token', unique: true
   end
 
   add_foreign_key 'comments', 'quotations'
+  add_foreign_key 'quotation_detail_has_companies', 'companies'
+  add_foreign_key 'quotation_detail_has_companies', 'quotation_details'
+  add_foreign_key 'quotation_detail_has_operations', 'operations'
+  add_foreign_key 'quotation_detail_has_operations', 'quotation_details'
   add_foreign_key 'quotation_details', 'quotations'
-  add_foreign_key 'quotation_has_operations', 'operations'
-  add_foreign_key 'quotation_has_operations', 'quotations'
-  add_foreign_key 'quotation_has_suppliers', 'quotations'
-  add_foreign_key 'quotation_has_suppliers', 'suppliers'
-  add_foreign_key 'quotations', 'clients'
+  add_foreign_key 'quotations', 'companies', column: 'client_id'
   add_foreign_key 'quotations', 'materials'
   add_foreign_key 'quotations', 'users'
 end
