@@ -1,8 +1,0 @@
-# frozen_string_literal: true
-
-# rubocop警告対応の為、記述
-class AddQuotationToSales < ActiveRecord::Migration[6.1]
-  def change
-    add_reference :sales, :quotation, null: false, foreign_key: true
-  end
-end
